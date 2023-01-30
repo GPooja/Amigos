@@ -27,7 +27,7 @@ namespace AmigosAPI.Controllers
 
         [Route("EditBill")]
         [HttpPost]
-        public Task<BillDTO> EditBill(EditBillDTO dto) {
+        public async Task<BillDTO> EditBill(EditBillDTO dto) {
             return await _billService.EditBillAsync(dto);
         }
     }

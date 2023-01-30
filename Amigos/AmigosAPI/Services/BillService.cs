@@ -57,7 +57,7 @@ namespace AmigosAPI.Services
             return ConstructBillDTO(savedBill, userShares);
         }
 
-        public async Task<BillDTO> EditBill(EditBillDTO ebDTO)
+        public async Task<BillDTO> EditBillAsync(EditBillDTO ebDTO)
         {
             var billInDB = _context.Bills.Where(b => b.ID == ebDTO.ID).FirstOrDefault();
             if (billInDB != null)
@@ -78,7 +78,7 @@ namespace AmigosAPI.Services
                     recalcShare = true;
                 }
 
-                var newPaidBy = _userService.GetUserByEmail(ebDTO.PaidByEmail));
+                var newPaidBy = _userService.GetUserByEmail(ebDTO.PaidByEmail);
 
                 Bill bill = new Bill()
                 {

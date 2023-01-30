@@ -10,5 +10,6 @@
     <WebStackScaffolding_LayoutPageFile />
     <WebStackScaffolding_DbContextTypeFullName>AmigosAPI.Data.BillManagerContext</WebStackScaffolding_DbContextTypeFullName>
     <WebStackScaffolding_IsAsyncSelected>False</WebStackScaffolding_IsAsyncSelected>
+    <NameOfLastUsedPublishProfile>D:\GitHub\Amigos\.github\workflows\amigos-ml.yml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
