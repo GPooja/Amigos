@@ -98,6 +98,7 @@ namespace AmigosAPI.Controllers
         }
 
         [Route("AddUserMany")]
+        [HttpPost]
         public ActionResult<List<UserDTO>> AddUser(List<NewUserDTO> users)
         {
             try
