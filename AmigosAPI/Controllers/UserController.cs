@@ -98,11 +98,11 @@ namespace AmigosAPI.Controllers
         }
 
         [Route("AddUserMany")]
-        public ActionResult<List<UserDTO>> AddUser(List<NewUserDTO> user)
+        public ActionResult<List<UserDTO>> AddUser(List<NewUserDTO> users)
         {
             try
             {
-                return _userService.AddUserMany(user);
+                return _userService.AddUserMany(users);
             }
             catch (Exception ex)
             {
