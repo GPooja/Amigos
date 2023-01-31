@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace AmigosAPI.DTOs
+namespace AmigosAPI.DTOs.Bill
 {
     public class EditBillDTO
     {

@@ -1,5 +1,6 @@
 ﻿using AmigosAPI.Data;
 using AmigosAPI.DTOs;
+using AmigosAPI.DTOs.Bill;
 using AmigosAPI.Models;
 
 namespace AmigosAPI.Services
@@ -59,7 +60,7 @@ namespace AmigosAPI.Services
 
         public async Task<BillDTO> EditBillAsync(EditBillDTO ebDTO)
         {
-            var billInDB = _context.Bills.Where(b => b.ID == ebDTO.ID).FirstOrDefault();
+            var billInDB = GetBillByID(ebDTO.ID);
             if (billInDB != null)
             {
                 bool recalcShare = false;
@@ -98,11 +99,27 @@ namespace AmigosAPI.Services
                 };
 
                 _context.Entry(billInDB).CurrentValues.SetValues(bill);
-                _context.SaveChanges();
                 var shares = _ledgerService.UpdateLedgerEntries(bill, ebDTO.SharedByEmails, recalcShare);
+                _context.SaveChanges();
+
                 return ConstructBillDTO(bill, shares);
             }
             return null;
+        }
+
+        public bool DeleteBill(int billID)
+        {
+            var bill = GetBillByID(billID);
+            if(bill != null)
+            {
+                _ledgerService.DeleteLedgerEntries(billID);
+                bill.IsDeleted = true;
+                _context.Bills.Attach(bill);
+                _context.Entry(bill).Property(b => b.IsDeleted).IsModified = true;
+                _context.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public BillDTO ConstructBillDTO(Bill bill, List<UserShareDTO> shares)
@@ -119,6 +136,11 @@ namespace AmigosAPI.Services
                 PaidBy = _userService.GetUserDTO(bill.PaidBy),
                 UserShares = shares
             };
+        }
+
+        public Bill GetBillByID(int billID)
+        {
+            return _context.Bills.Where(bill => bill.ID == billID).SingleOrDefault();
         }
     }
 }

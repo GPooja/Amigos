@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection.Metadata.Ecma335;
 
-namespace AmigosAPI.DTOs
+namespace AmigosAPI.DTOs.User
 {
     public class NewUserDTO
     {

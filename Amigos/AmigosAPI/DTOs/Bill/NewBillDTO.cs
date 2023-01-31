@@ -1,6 +1,6 @@
 ﻿using Microsoft.Build.Framework;
 
-namespace AmigosAPI.DTOs
+namespace AmigosAPI.DTOs.Bill
 {
     public class NewBillDTO
     {

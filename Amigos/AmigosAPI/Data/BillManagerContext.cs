@@ -18,8 +18,11 @@ namespace AmigosAPI.Data
         { 
             modelBuilder.Entity<Bill>().Property(b => b.Created).HasDefaultValueSql("getdate()");
             modelBuilder.Entity<Bill>().Property(b => b.Modified).HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Bill>().Property(b => b.IsDeleted).HasDefaultValue(false);
             modelBuilder.Entity<User>().Property(p => p.Created).HasDefaultValueSql("getdate()");
             modelBuilder.Entity<User>().Property(p => p.Modified).HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<User>().Property(u => u.IsDeleted).HasDefaultValue(false);
+            modelBuilder.Entity<LedgerEntry>().Property(le => le.IsDeleted).HasDefaultValue(false);
         }
     }
 }

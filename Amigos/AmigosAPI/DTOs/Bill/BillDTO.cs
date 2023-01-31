@@ -1,4 +1,6 @@
-﻿namespace AmigosAPI.DTOs
+﻿using AmigosAPI.DTOs.User;
+
+namespace AmigosAPI.DTOs.Bill
 {
     public class BillDTO
     {

@@ -33,31 +33,30 @@ namespace AmigosAPI.Services
             return GetUserShareDTOList(bill.ID);
         }
 
-        public int UpdatePaidByInLedger(int iD, User paidBy)
-        {
-            var entriesAffected = _context.Ledger.Where(l => l.BillID == iD).ToList();
-            entriesAffected.ForEach(l => {
-                l.GivenBy = paidBy;
-                l.GivenByUserID = paidBy.ID;
-            });
-            return _context.SaveChanges();
-        }
-
         public List<UserShareDTO> UpdateLedgerEntries(Bill bill, List<string> sharedByEmails,bool recalculateShare)
         {
+            if (sharedByEmails == null)
+            {
+                sharedByEmails = new List<string>();
+            }
+            if (!sharedByEmails.Contains(bill.PaidBy.Email))
+            {
+                sharedByEmails.Add(bill.PaidBy.Email);
+            }
+
             var oldEmailList = _context.Ledger.Where(l => l.BillID == bill.ID)
                                               .Join(_context.Users,
                                                     l => l.GivenToUserID,
                                                     u => u.ID,
                                                     (l, u) => u.Email).ToList();
             var toRemove = oldEmailList.Except(sharedByEmails).ToList(); //UserEmail Entries to remove from the bill
-            var toAdd = sharedByEmails.Except(sharedByEmails).ToList(); //UserEmail Entries to add to the bill
+            var toAdd = sharedByEmails.Except(oldEmailList).ToList(); //UserEmail Entries to add to the bill
             var toUpdate = sharedByEmails.Intersect(oldEmailList).ToList(); //Existing UserEmail Entries to update
 
             if(toRemove.Count > 0)
             {
                 var markDeleted = _context.Ledger.Where(l => l.BillID == bill.ID)
-                               .Join(_context.Users,
+                                  .Join(_context.Users,
                                      l => new { ID = l.GivenToUserID, RemovableEmail = true },
                                      u => new { ID = u.ID, RemovableEmail = toRemove.Contains(u.Email) },
                                      (l, u) => l).ToList();
@@ -73,14 +72,23 @@ namespace AmigosAPI.Services
                                      l => new { ID = l.GivenToUserID, UpdateEmail = true },
                                      u => new { ID = u.ID, UpdateEmail = toUpdate.Contains(u.Email) },
                                      (l, u) => l).ToList();
-                updatables.ForEach(l => l.Amount = shareValue);
+                updatables.ForEach(l => {
+                    l.Amount = shareValue;
+                    l.GivenBy = bill.PaidBy;
+                    l.GivenByUserID = bill.PaidBy.ID;
+                });
 
             }
 
-            UpdatePaidByInLedger(bill.ID, bill.PaidBy);
             _context.SaveChanges();
 
             return GetUserShareDTOList(bill.ID);
+        }
+
+        public void DeleteLedgerEntries(int billID)
+        {
+            var entries = _context.Ledger.Where(entry =>entry.BillID == billID).ToList();
+            entries.ForEach(entry => { entry.IsDeleted= true; });
         }
 
         private void AddNewLedgerEntries(List<string> emails, double shareValue, User paidBy, int billID)

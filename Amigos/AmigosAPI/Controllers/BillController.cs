@@ -1,7 +1,8 @@
 ﻿using AmigosAPI.Data;
-using AmigosAPI.DTOs;
+using AmigosAPI.DTOs.Bill;
 using AmigosAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AmigosAPI.Controllers
 {
@@ -29,6 +30,20 @@ namespace AmigosAPI.Controllers
         [HttpPost]
         public async Task<BillDTO> EditBill(EditBillDTO dto) {
             return await _billService.EditBillAsync(dto);
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteBill(int billID) {
+            var bill = _billService.GetBillByID(billID);
+            if(bill == null)
+            {
+                return BadRequest("Bill Not Found");
+            }
+            if (_billService.DeleteBill(billID))
+            {
+                return Ok();
+            };
+            return Problem("Unable to Delete Bill", "Bill", (int)HttpStatusCode.InternalServerError);
         }
     }
 }

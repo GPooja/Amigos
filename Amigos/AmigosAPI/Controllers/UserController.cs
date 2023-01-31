@@ -8,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using AmigosAPI.Data;
 using AmigosAPI.Models;
 using AmigosAPI.Services;
-using AmigosAPI.DTOs;
+using AmigosAPI.DTOs.User;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 
 namespace AmigosAPI.Controllers
 {
@@ -32,24 +35,63 @@ namespace AmigosAPI.Controllers
             return _userService.GetUsers();
         }
 
-        // GET: api/User/5
         [HttpGet("{id}")]
-        public User GetUser(string email)
+        public ActionResult<UserDTO> GetUser(int ID)
         {
-            return null;
+            var user = _userService.GetUserDTOByID(ID);
+            if (user == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            return Ok(user);
         }
 
+        [HttpPost, Route("GetUser")]
+        public ActionResult<UserDTO> GetUser(string email)
+        {
+            var user = _userService.GetUserDTOByEmail(email);
+            if (user == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            return Ok(user);
+        }
+
+        [Route("AddUser")]
         [HttpPost]
-        public User AddUser(NewUserDTO user)
+        public UserDTO AddUser(NewUserDTO user)
         {
             return _userService.AddUser(user);
         }
 
-        // DELETE: api/User/5
-        [HttpDelete("{id}")]
-        public void DeleteUser(string email)
+        [Route("EditUser")]
+        [HttpPost]
+        public ActionResult<UserDTO> EditUser(EditUserDTO user)
         {
-            
+
+            var userDTO = _userService.EditUser(user);
+            if (userDTO == null)
+            {
+                return BadRequest();
+            }
+            return userDTO;
+
+        }
+
+        // DELETE: api/User/5
+        [HttpDelete]
+        public ActionResult DeleteUser(string email)
+        {
+            var user = _userService.GetUserByEmail(email);
+            if(user == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            if (!_userService.DeleteUser(user))
+            {
+                return Ok();               
+            }
+            return Problem("Unable to Delete User", "User", (int)HttpStatusCode.InternalServerError);
         }
 
         [HttpGet]
