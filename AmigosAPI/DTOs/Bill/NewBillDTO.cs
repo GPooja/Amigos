@@ -9,7 +9,7 @@ namespace AmigosAPI.DTOs.Bill
         [Required]
         public double BillAmount { get; set; }
         [Required]
-        public string Currency { get; set; }
+        public string CurrencyCode { get; set; }
         [Required]
         public string PaidByEmail { get; set; }
         [Required]

@@ -19,7 +19,7 @@ namespace AmigosAPI.Models
         [Required]
         public double Amount { get; set; }
         [Required,MaxLength(3)]
-        public string Currency { get; set; }
+        public string CurrencyCode { get; set; }
         public double AmountCAD { get; set; }
         public double ConversionRate { get; set; } //for 1 CAD
         [ForeignKey(nameof(PaidBy))]

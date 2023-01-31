@@ -12,6 +12,8 @@ using AmigosAPI.DTOs.User;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Formatting;
+using AmigosAPI.DTOs.Bill;
+using AmigosAPI.DTOs.Summary;
 
 namespace AmigosAPI.Controllers
 {
@@ -21,24 +23,40 @@ namespace AmigosAPI.Controllers
     {
         private readonly BillManagerContext _context;
         private UserService _userService;
+        private SummaryService _summaryService;
 
-        public UserController(BillManagerContext context)
+        public UserController(BillManagerContext context, IConfiguration config)
         {
             _context = context;
-            _userService = new UserService(context);
+            _userService = new UserService(context, config);
+            _summaryService = new SummaryService(context, config);
         }
 
         // GET: api/User
         [HttpGet]
-        public List<UserDTO> GetUsers()
+        public ActionResult<List<UserDTO>> GetUsers()
         {
-            return _userService.GetUsers();
+            try { 
+                return _userService.GetUsers();
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get users", "Users", (int) HttpStatusCode.InternalServerError);
+            }
         }
 
         [HttpGet("{id}")]
         public ActionResult<UserDTO> GetUser(int ID)
         {
-            var user = _userService.GetUserDTOByID(ID);
+            UserDTO user = null;
+            try
+            {
+                user = _userService.GetUserDTOByID(ID);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get user", "User", (int)HttpStatusCode.InternalServerError);
+            }
             if (user == null)
             {
                 return BadRequest("User Not Found");
@@ -49,7 +67,15 @@ namespace AmigosAPI.Controllers
         [HttpPost, Route("GetUser")]
         public ActionResult<UserDTO> GetUser(string email)
         {
-            var user = _userService.GetUserDTOByEmail(email);
+            UserDTO user = null;
+            try
+            {
+                user = _userService.GetUserDTOByEmail(email);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get user", "User", (int)HttpStatusCode.InternalServerError);
+            }
             if (user == null)
             {
                 return BadRequest("User Not Found");
@@ -59,17 +85,29 @@ namespace AmigosAPI.Controllers
 
         [Route("AddUser")]
         [HttpPost]
-        public UserDTO AddUser(NewUserDTO user)
+        public ActionResult<UserDTO> AddUser(NewUserDTO user)
         {
-            return _userService.AddUser(user);
+            try { 
+                return _userService.AddUser(user);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to add user", "User", (int)HttpStatusCode.InternalServerError);
+            }
         }
 
         [Route("EditUser")]
         [HttpPost]
         public ActionResult<UserDTO> EditUser(EditUserDTO user)
         {
-
-            var userDTO = _userService.EditUser(user);
+            UserDTO userDTO = null;
+            try { 
+                userDTO = _userService.EditUser(user);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to edit user", "User", (int)HttpStatusCode.InternalServerError);
+            }
             if (userDTO == null)
             {
                 return BadRequest();
@@ -82,23 +120,73 @@ namespace AmigosAPI.Controllers
         [HttpDelete]
         public ActionResult DeleteUser(string email)
         {
-            var user = _userService.GetUserByEmail(email);
-            if(user == null)
+            User user = null;
+            try { 
+                user = _userService.GetUserByEmail(email);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get user", "User", (int)HttpStatusCode.InternalServerError);
+            }
+            if (user == null)
             {
                 return BadRequest("User Not Found");
             }
             if (!_userService.DeleteUser(user))
             {
-                return Ok();               
+                return Ok();
             }
             return Problem("Unable to Delete User", "User", (int)HttpStatusCode.InternalServerError);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("QuarterlySummaries")]
-        public Object GetQuarterlySummary(string userEmail)
+        public ActionResult<List<QuarterlySummaryDTO>> GetQuarterlySummary(string userEmail, string currency)
         {
-            return null;
+            User user = null;
+            try
+            {
+                user = _userService.GetUserByEmail(userEmail);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get user", "User", (int)HttpStatusCode.InternalServerError);
+            }
+            if (user == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            var qsList = _summaryService.GetQuarterlySummaries(user, currency);
+            if(qsList != null)
+            {
+                return Ok(qsList);
+            }
+            return Problem("Unable to Delete User", "User", (int)HttpStatusCode.InternalServerError);
+        }
+
+        [HttpPost]
+        [Route("UserShares")]
+        public ActionResult<List<UserShareDTO>> GetUserShares(string userEmail, string currency)
+        {
+            User user = null;
+            try
+            {
+                user = _userService.GetUserByEmail(userEmail);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to get user", "User", (int)HttpStatusCode.InternalServerError);
+            }
+            if (user == null)
+            {
+                return BadRequest("User Not Found");
+            }
+            var qsList = _summaryService.GetUserShares(user, currency);
+            if (qsList != null)
+            {
+                return Ok(qsList);
+            }
+            return Problem("Unable to Delete User", "User", (int)HttpStatusCode.InternalServerError);
         }
     }
 }

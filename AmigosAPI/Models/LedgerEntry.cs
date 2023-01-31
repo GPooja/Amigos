@@ -10,7 +10,7 @@ namespace AmigosAPI.Models
         Loan = 2
     }
 
-    [Table("Ledger")]
+    [Table("AmigosLedger")]
     [PrimaryKey(nameof(ID))]
     public class LedgerEntry
     {

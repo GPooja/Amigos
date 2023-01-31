@@ -6,7 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 
 namespace AmigosAPI.Models
 {
-    [Table("User")]
+    [Table("AmigoUser")]
     [PrimaryKey(nameof(ID))]
     public class User
     {
@@ -18,8 +18,6 @@ namespace AmigosAPI.Models
         public string LastName { get; set; }
         [Required, StringLength(255)]
         public string Email { get; set; }
-        [Required, StringLength(3)]
-        public string DefaultCurrency { get; set; }
         public DateTime Created { get; set; }
         public DateTime Modified { get; set; }
         public bool IsDeleted { get; set; } //For SoftDelete

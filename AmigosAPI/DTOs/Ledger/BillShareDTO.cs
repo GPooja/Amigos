@@ -1,6 +1,6 @@
-﻿namespace AmigosAPI.DTOs
+﻿namespace AmigosAPI.DTOs.Ledger
 {
-    public class UserShareDTO
+    public class BillShareDTO
     {
         public int UserID { get; set; }
         public double ShareAmount { get; set; }

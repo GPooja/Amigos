@@ -1,6 +1,8 @@
 ﻿using AmigosAPI.Data;
-using AmigosAPI.DTOs;
+using AmigosAPI.DTOs.Bill;
+using AmigosAPI.DTOs.Ledger;
 using AmigosAPI.Models;
+using Microsoft.Identity.Client;
 
 namespace AmigosAPI.Services
 {
@@ -8,14 +10,14 @@ namespace AmigosAPI.Services
     {
         private readonly BillManagerContext _context;
         private UserService _userService;
-
-        public LedgerService(BillManagerContext context)
+        public LedgerService(BillManagerContext context, IConfiguration config)
         {
             _context= context;
-            _userService = new UserService(context);
+            _userService = new UserService(context, config);
+
         }
 
-        public List<UserShareDTO> AddLedgerEntries(Bill bill, List<string> sharedByEmails)
+        public List<BillShareDTO> AddLedgerEntries(Bill bill, List<string> sharedByEmails)
         {
             if(sharedByEmails== null)
             {
@@ -30,10 +32,10 @@ namespace AmigosAPI.Services
             AddNewLedgerEntries(sharedByEmails, shareValue, bill.PaidBy, bill.ID);
 
             _context.SaveChanges();
-            return GetUserShareDTOList(bill.ID);
+            return GetBillShareDTOList(bill.ID);
         }
 
-        public List<UserShareDTO> UpdateLedgerEntries(Bill bill, List<string> sharedByEmails,bool recalculateShare)
+        public List<BillShareDTO> UpdateLedgerEntries(Bill bill, List<string> sharedByEmails,bool recalculateShare)
         {
             if (sharedByEmails == null)
             {
@@ -44,7 +46,7 @@ namespace AmigosAPI.Services
                 sharedByEmails.Add(bill.PaidBy.Email);
             }
 
-            var oldEmailList = _context.Ledger.Where(l => l.BillID == bill.ID)
+            var oldEmailList = _context.Ledger.Where(l => l.BillID == bill.ID && !l.IsDeleted)
                                               .Join(_context.Users,
                                                     l => l.GivenToUserID,
                                                     u => u.ID,
@@ -67,7 +69,7 @@ namespace AmigosAPI.Services
             {
                 var shareValue = bill.AmountCAD / sharedByEmails.Count;
                 AddNewLedgerEntries(toAdd, shareValue, bill.PaidBy, bill.ID);
-                var updatables = _context.Ledger.Where(l => l.BillID == bill.ID)
+                var updatables = _context.Ledger.Where(l => l.BillID == bill.ID && !l.IsDeleted)
                                .Join(_context.Users,
                                      l => new { ID = l.GivenToUserID, UpdateEmail = true },
                                      u => new { ID = u.ID, UpdateEmail = toUpdate.Contains(u.Email) },
@@ -82,7 +84,7 @@ namespace AmigosAPI.Services
 
             _context.SaveChanges();
 
-            return GetUserShareDTOList(bill.ID);
+            return GetBillShareDTOList(bill.ID);
         }
 
         public void DeleteLedgerEntries(int billID)
@@ -111,15 +113,17 @@ namespace AmigosAPI.Services
             }
         }
 
-        private List<UserShareDTO> GetUserShareDTOList(int billID)
+        public List<BillShareDTO> GetBillShareDTOList(int billID)
         {
-            return _context.Ledger.Where(loan => loan.BillID == billID)
-                                  .Select(loan => new UserShareDTO()
+            return _context.Ledger.Where(loan => loan.BillID == billID && !loan.IsDeleted)
+                                  .Select(loan => new BillShareDTO()
                                   {
                                       UserID = loan.GivenToUserID,
                                       ShareAmount = loan.Amount,
                                       Email = loan.GivenTo.Email
                                   }).ToList();
         }
+
+        
     }
 }

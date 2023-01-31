@@ -1,6 +1,7 @@
 ﻿using AmigosAPI.Data;
-using AmigosAPI.DTOs;
 using AmigosAPI.DTOs.Bill;
+using AmigosAPI.DTOs.Ledger;
+using AmigosAPI.DTOs.User;
 using AmigosAPI.Models;
 
 namespace AmigosAPI.Services
@@ -15,8 +16,8 @@ namespace AmigosAPI.Services
         public BillService(BillManagerContext context, IConfiguration config)
         {
             _context = context;
-            _userService = new UserService(context);
-            _ledgerService = new LedgerService(context);
+            _userService = new UserService(context,config);
+            _ledgerService = new LedgerService(context, config);
             _rateService = new CurrencyRateService(config);
         }
 
@@ -25,14 +26,14 @@ namespace AmigosAPI.Services
             var paidBy = _userService.GetUserByEmail(newBill.PaidByEmail);
             //converting into cad
             double amountCAD, rate;
-            if (newBill.Currency.Equals("CAD"))
+            if (newBill.CurrencyCode.Equals("CAD"))
             {
                 amountCAD = newBill.BillAmount;
                 rate = 1;
             }
             else
             {
-                rate = await _rateService.GetConversionRateAsync(newBill.Currency, "CAD", newBill.BillDate);
+                rate = await _rateService.GetConversionRateAsync(newBill.CurrencyCode, "CAD", newBill.BillDate);
                 amountCAD = newBill.BillAmount * rate;
             }
             //Create Bill object
@@ -41,7 +42,7 @@ namespace AmigosAPI.Services
                 BillDate = newBill.BillDate,
                 Description = newBill.Description,
                 Amount = newBill.BillAmount,
-                Currency = newBill.Currency,
+                CurrencyCode = newBill.CurrencyCode,
                 AmountCAD = amountCAD,
                 ConversionRate = rate,
                 PaidBy = paidBy,
@@ -50,12 +51,12 @@ namespace AmigosAPI.Services
                 CreatedByUserID = paidBy.ID,
                 ModifiedBy = paidBy,
                 ModifiedByUserID = paidBy.ID
-            };            
+            };
             Bill savedBill = _context.Bills.Add(bill).Entity;
             _context.SaveChanges();
             //Creating Loan entries
-            var userShares = _ledgerService.AddLedgerEntries(bill, newBill.SharedByEmails);
-            return ConstructBillDTO(savedBill, userShares);
+            var billShares = _ledgerService.AddLedgerEntries(bill, newBill.SharedByEmails);
+            return ConstructBillDTO(savedBill, billShares, null);
         }
 
         public async Task<BillDTO> EditBillAsync(EditBillDTO ebDTO)
@@ -64,17 +65,17 @@ namespace AmigosAPI.Services
             if (billInDB != null)
             {
                 bool recalcShare = false;
-                double rate=billInDB.ConversionRate, 
+                double rate = billInDB.ConversionRate,
                        amountCAD = billInDB.AmountCAD;
 
                 //Change in Bill Date
-                if (!ebDTO.BillDate.Date.Equals(billInDB.BillDate.Date) || !ebDTO.Currency.Equals(billInDB.Currency))
+                if (!ebDTO.BillDate.Date.Equals(billInDB.BillDate.Date) || !ebDTO.CurrencyCode.Equals(billInDB.CurrencyCode))
                 {
-                    rate = await _rateService.GetConversionRateAsync(ebDTO.Currency, "CAD", ebDTO.BillDate);
+                    rate = await _rateService.GetConversionRateAsync(ebDTO.CurrencyCode, "CAD", ebDTO.BillDate);
                     amountCAD = ebDTO.BillAmount * rate;
                     recalcShare = true;
                 }
-                if(ebDTO.BillAmount != billInDB.Amount)
+                if (ebDTO.BillAmount != billInDB.Amount)
                 {
                     recalcShare = true;
                 }
@@ -87,7 +88,7 @@ namespace AmigosAPI.Services
                     BillDate = ebDTO.BillDate,
                     Description = ebDTO.Description,
                     Amount = ebDTO.BillAmount,
-                    Currency = ebDTO.Currency,
+                    CurrencyCode = ebDTO.CurrencyCode,
                     AmountCAD = amountCAD,
                     ConversionRate = rate,
                     PaidBy = newPaidBy,
@@ -102,7 +103,7 @@ namespace AmigosAPI.Services
                 var shares = _ledgerService.UpdateLedgerEntries(bill, ebDTO.SharedByEmails, recalcShare);
                 _context.SaveChanges();
 
-                return ConstructBillDTO(bill, shares);
+                return ConstructBillDTO(bill, shares, null);
             }
             return null;
         }
@@ -110,7 +111,7 @@ namespace AmigosAPI.Services
         public bool DeleteBill(int billID)
         {
             var bill = GetBillByID(billID);
-            if(bill != null)
+            if (bill != null)
             {
                 _ledgerService.DeleteLedgerEntries(billID);
                 bill.IsDeleted = true;
@@ -122,25 +123,81 @@ namespace AmigosAPI.Services
             return false;
         }
 
-        public BillDTO ConstructBillDTO(Bill bill, List<UserShareDTO> shares)
+        public BillDTO ConstructBillDTO(Bill bill, List<BillShareDTO> shares, string? currency)
         {
-            return new BillDTO()
+            var billDTO = new BillDTO()
             {
                 ID = bill.ID,
                 BillDate = bill.BillDate,
-                Description = bill.Description,
-                Amount = bill.Amount,
-                Currency = bill.Currency,
+                Description = bill.Description,                
                 AmountInCAD = bill.AmountCAD,
                 ConversionRate = bill.ConversionRate,
                 PaidBy = _userService.GetUserDTO(bill.PaidBy),
-                UserShares = shares
+                BillShares = shares
             };
+            if(string.IsNullOrEmpty(currency))
+            {
+                if (currency.Equals("CAD"))
+                {
+                    billDTO.Amount = bill.AmountCAD;
+                }
+                else 
+                {
+                    var convRate = _rateService.GetConversionRateAsync(bill.CurrencyCode, currency, billDTO.BillDate).Result;
+                    billDTO.Amount = bill.Amount * convRate;
+                }
+                billDTO.CurrencyCode = currency;
+            }
+            else
+            {
+                billDTO.Amount = bill.Amount;
+                billDTO.CurrencyCode = bill.CurrencyCode;
+            }
+            return billDTO;
         }
 
         public Bill GetBillByID(int billID)
         {
-            return _context.Bills.Where(bill => bill.ID == billID).SingleOrDefault();
+            return _context.Bills.Where(bill => bill.ID == billID && !bill.IsDeleted).SingleOrDefault();
         }
+
+        public BillHistoryDTO GetBillHistory(User user, string currency)
+        {
+            var bills = GetBillsForUser(user.ID);            
+
+            if (bills != null)
+            {
+                List<BillDTO> billList = new List<BillDTO>();
+
+                bills.ForEach(bill =>
+                {
+                    billList.Add(
+                        ConstructBillDTO(
+                            bill,
+                            _ledgerService.GetBillShareDTOList(bill.ID),
+                            currency
+                        )
+                    );
+                });
+
+
+                return new BillHistoryDTO()
+                {
+                    UserID = user.ID,
+                    UserEmail = user.Email,
+                    TotalBills = bills.Count,
+                    TotalBillAmount = bills.Select(bill => bill.Amount).Sum(),
+                    Bills = billList
+                };
+            }
+            return null;
+        }
+
+        public List<Bill> GetBillsForUser(int userID)
+        {
+            return _context.Bills.Where(b => b.PaidByUserID == userID && !b.IsDeleted).ToList();
+        }
+
+        
     }
 }

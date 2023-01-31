@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
 using AmigosAPI.Data;
+using AmigosAPI.DTOs;
+using AmigosAPI.DTOs.Bill;
 using AmigosAPI.DTOs.User;
 using AmigosAPI.Models;
 using Microsoft.AspNetCore.Identity;
@@ -10,7 +12,8 @@ namespace AmigosAPI.Services
     public class UserService
     {
         private readonly BillManagerContext _context;
-        public UserService(BillManagerContext context) 
+
+        public UserService(BillManagerContext context, IConfiguration config)
         {
             _context = context;
         }
@@ -21,11 +24,10 @@ namespace AmigosAPI.Services
             {
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
-                Email = newUser.Email,
-                DefaultCurrency = newUser.DefaultCurrency
+                Email = newUser.Email
             };
             var user = _context.Users.Add(builtUser);
-             _context.SaveChanges();
+            _context.SaveChanges();
             return GetUserDTO(user.Entity);
         }
 
@@ -37,7 +39,7 @@ namespace AmigosAPI.Services
 
         public UserDTO EditUser(EditUserDTO userDTO)
         {
-            var userInDB = _context.Users.Where(u => u.ID == userDTO.UserID).SingleOrDefault();
+            var userInDB = _context.Users.Where(u => u.ID == userDTO.UserID && !u.IsDeleted).SingleOrDefault();
             if (userInDB != null)
             {
                 User user = new User()
@@ -46,7 +48,6 @@ namespace AmigosAPI.Services
                     FirstName = userDTO.FirstName,
                     LastName = userDTO.LastName,
                     Email = userDTO.Email,
-                    DefaultCurrency = userDTO.DefaultCurrency,
                     Modified = DateTime.Now
                 };
                 _context.Entry(userInDB).CurrentValues.SetValues(user);
@@ -57,7 +58,7 @@ namespace AmigosAPI.Services
         }
         public User GetUserByEmail(string email)
         {
-            return _context.Users.SingleOrDefault(p => p.Email == email);
+            return _context.Users.SingleOrDefault(p => p.Email == email&& !p.IsDeleted);
         }
 
         public UserDTO GetUserDTOByEmail(string email)
@@ -75,7 +76,8 @@ namespace AmigosAPI.Services
             return GetUserDTO(GetUserByID(ID));
         }
 
-        public UserDTO GetUserDTO(User user) {
+        public UserDTO GetUserDTO(User user)
+        {
             if (user != null)
             {
                 return new UserDTO()
@@ -83,8 +85,7 @@ namespace AmigosAPI.Services
                     ID = user.ID,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Email = user.Email,
-                    DefaultCurrency = user.DefaultCurrency
+                    Email = user.Email
                 };
             }
             return null;
@@ -102,6 +103,8 @@ namespace AmigosAPI.Services
                 return false;
             }
             return true;
-        }        
+        }
+
+        
     }
 }

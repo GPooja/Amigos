@@ -570,8 +570,6 @@ D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.AssemblyInfo.cs
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.csproj.CoreCompileInputs.cache
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.MvcApplicationPartsAssemblyInfo.cs
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.MvcApplicationPartsAssemblyInfo.cache
-D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.RazorAssemblyInfo.cache
-D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\AmigosAPI.RazorAssemblyInfo.cs
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\staticwebassets\msbuild.AmigosAPI.Microsoft.AspNetCore.StaticWebAssets.props
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\staticwebassets\msbuild.build.AmigosAPI.props
 D:\GitHub\Amigos\AmigosAPI\obj\Debug\net6.0\staticwebassets\msbuild.buildMultiTargeting.AmigosAPI.props
