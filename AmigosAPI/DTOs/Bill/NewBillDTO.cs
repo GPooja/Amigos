@@ -1,4 +1,4 @@
-﻿using Microsoft.Build.Framework;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AmigosAPI.DTOs.Bill
 {
@@ -8,9 +8,9 @@ namespace AmigosAPI.DTOs.Bill
         public DateTime BillDate { get; set; }
         [Required]
         public double BillAmount { get; set; }
-        [Required]
+        [Required, StringLength(3)]
         public string CurrencyCode { get; set; }
-        [Required]
+        [Required,EmailAddress]
         public string PaidByEmail { get; set; }
         [Required]
         public List<string> SharedByEmails { get; set; }

@@ -3,6 +3,7 @@ using AmigosAPI.DTOs.Bill;
 using AmigosAPI.Models;
 using AmigosAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace AmigosAPI.Controllers
@@ -74,7 +75,7 @@ namespace AmigosAPI.Controllers
         }
 
         [HttpPost, Route("BillHistoryByID")]
-        public ActionResult<BillHistoryDTO> GetBillHistory(int userID, string currency)
+        public ActionResult<BillHistoryDTO> GetBillHistory(int userID, [StringLength(3)] string currency)
         {
             User user = null;
             try{
@@ -100,7 +101,7 @@ namespace AmigosAPI.Controllers
         }
 
         [HttpPost, Route("BillHistoryByEmail")]
-        public ActionResult<BillHistoryDTO> GetBillHistory(string userEmail, string currency)
+        public ActionResult<BillHistoryDTO> GetBillHistory([EmailAddress] string userEmail, [StringLength(3)] string currency)
         {
             User user = null;
             try

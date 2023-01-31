@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Net.Http.Formatting;
 using AmigosAPI.DTOs.Bill;
 using AmigosAPI.DTOs.Summary;
+using System.ComponentModel.DataAnnotations;
 
 namespace AmigosAPI.Controllers
 {
@@ -65,7 +66,7 @@ namespace AmigosAPI.Controllers
         }
 
         [HttpPost, Route("GetUser")]
-        public ActionResult<UserDTO> GetUser(string email)
+        public ActionResult<UserDTO> GetUser([EmailAddress] string email)
         {
             UserDTO user = null;
             try
@@ -86,7 +87,7 @@ namespace AmigosAPI.Controllers
         [Route("AddUser")]
         [HttpPost]
         public ActionResult<UserDTO> AddUser(NewUserDTO user)
-        {
+        {   
             try { 
                 return _userService.AddUser(user);
             }
@@ -118,8 +119,8 @@ namespace AmigosAPI.Controllers
 
         // DELETE: api/User/5
         [HttpDelete]
-        public ActionResult DeleteUser(string email)
-        {
+        public ActionResult DeleteUser([EmailAddress]string email)
+        {   
             User user = null;
             try { 
                 user = _userService.GetUserByEmail(email);
@@ -141,7 +142,7 @@ namespace AmigosAPI.Controllers
 
         [HttpPost]
         [Route("QuarterlySummaries")]
-        public ActionResult<List<QuarterlySummaryDTO>> GetQuarterlySummary(string userEmail, string currency)
+        public ActionResult<List<QuarterlySummaryDTO>> GetQuarterlySummary([EmailAddress] string userEmail, [StringLength(3)]string currency)
         {
             User user = null;
             try
@@ -166,7 +167,7 @@ namespace AmigosAPI.Controllers
 
         [HttpPost]
         [Route("UserShares")]
-        public ActionResult<List<UserShareDTO>> GetUserShares(string userEmail, string currency)
+        public ActionResult<List<UserShareDTO>> GetUserShares([EmailAddress] string userEmail, [StringLength(3)] string currency)
         {
             User user = null;
             try

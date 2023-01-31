@@ -11,6 +11,7 @@ namespace AmigosAPI.DTOs.User
         [StringLength(35)]
         public string LastName { get; set; }
         [StringLength(255)]
+        [EmailAddress]
         public string Email { get; set; }
     }
 }
