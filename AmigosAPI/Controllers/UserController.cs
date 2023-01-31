@@ -97,6 +97,20 @@ namespace AmigosAPI.Controllers
             }
         }
 
+        [Route("AddUserMany")]
+        public ActionResult<List<UserDTO>> AddUser(List<NewUserDTO> user)
+        {
+            try
+            {
+                return _userService.AddUserMany(user);
+            }
+            catch (Exception ex)
+            {
+                return Problem("Unable to add user", "User", (int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+
         [Route("EditUser")]
         [HttpPost]
         public ActionResult<UserDTO> EditUser(EditUserDTO user)

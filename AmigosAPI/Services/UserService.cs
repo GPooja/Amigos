@@ -105,6 +105,11 @@ namespace AmigosAPI.Services
             return true;
         }
 
-        
+        public ActionResult<List<UserDTO>> AddUserMany(List<NewUserDTO> users)
+        {
+            List<UserDTO> userDTOs = new List<UserDTO>();
+            users.ForEach(user => userDTOs.Add(AddUser(user)));
+            return userDTOs;
+        }
     }
 }
