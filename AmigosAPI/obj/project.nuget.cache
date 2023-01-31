@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "mf3as/+CH5mrXNzDdJUWKOoKGiBKypv2VQy5w66F3ZaAM5YPL4Q2CTOLdtyxMJmipknpJcJMCPxuEtu9rQPxMw==",
+  "dgSpecHash": "kOiXCQ63ZMUFDmk6Bu9yM9111nglUzOBP5LajcY9YPbH3kmBfQQpqrk8Ydb6xhGAkITRrgykq4uLmbOJID2TwQ==",
   "success": true,
-  "projectFilePath": "D:\\GitHub\\Amigos\\Amigos\\AmigosAPI\\AmigosAPI.csproj",
+  "projectFilePath": "D:\\GitHub\\Amigos\\AmigosAPI\\AmigosAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Jayashree\\.nuget\\packages\\azure.core\\1.24.0\\azure.core.1.24.0.nupkg.sha512",
     "C:\\Users\\Jayashree\\.nuget\\packages\\azure.identity\\1.6.0\\azure.identity.1.6.0.nupkg.sha512",

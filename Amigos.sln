@@ -5,8 +5,6 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AmigosAPI", "AmigosAPI\AmigosAPI.csproj", "{D760A221-91C4-4EF7-B526-FC723CD2EA8A}"
 EndProject
-Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "amigosml", "amigosml\amigosml.sqlproj", "{7FAA0741-680D-4454-96F1-EC866F6CEDD9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,12 +15,6 @@ Global
 		{D760A221-91C4-4EF7-B526-FC723CD2EA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D760A221-91C4-4EF7-B526-FC723CD2EA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D760A221-91C4-4EF7-B526-FC723CD2EA8A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FAA0741-680D-4454-96F1-EC866F6CEDD9}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

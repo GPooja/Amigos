@@ -9,33 +9,33 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AmigosAPI
 build_property.RootNamespace = AmigosAPI
-build_property.ProjectDir = D:\GitHub\Amigos\Amigos\AmigosAPI\
+build_property.ProjectDir = D:\GitHub\Amigos\AmigosAPI\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\GitHub\Amigos\Amigos\AmigosAPI
+build_property.MSBuildProjectDirectory = D:\GitHub\Amigos\AmigosAPI
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Ledger/Create.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Ledger/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVkZ2VyXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Ledger/Delete.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Ledger/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVkZ2VyXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Ledger/Details.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Ledger/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVkZ2VyXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Ledger/Edit.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Ledger/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVkZ2VyXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Ledger/Index.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Ledger/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTGVkZ2VyXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/GitHub/Amigos/Amigos/AmigosAPI/Views/Shared/_ValidationScriptsPartial.cshtml]
+[D:/GitHub/Amigos/AmigosAPI/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
