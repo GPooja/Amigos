@@ -33,20 +33,7 @@ namespace AmigosAPI.Controllers
             _summaryService = new SummaryService(context, config);
         }
 
-        // GET: api/User
-        [HttpGet]
-        public ActionResult<List<UserDTO>> GetUsers()
-        {
-            try { 
-                return _userService.GetUsers();
-            }
-            catch (Exception ex)
-            {
-                return Problem("Unable to get users", "Users", (int) HttpStatusCode.InternalServerError);
-            }
-        }
-
-        [HttpGet("{id}")]
+        [HttpGet("[[id]]")]
         public ActionResult<UserDTO> GetUser(int ID)
         {
             UserDTO user = null;
